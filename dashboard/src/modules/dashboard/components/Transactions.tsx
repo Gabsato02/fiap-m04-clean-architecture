@@ -71,7 +71,9 @@ export default function Transactions() {
           className="form-control"
           placeholder="Buscar uma transação" 
         ></input>
-        <span className="input-group-text" id="basic-addon2">Busca</span>
+        <span className="input-group-text" id="basic-addon2">
+          <i className="fa-solid fa-magnifying-glass"></i>
+        </span>
       </div>
       
       {(

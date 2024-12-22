@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getTransactions } from "../services";
+import { Transaction } from "../../../types";
+import { formatDate } from "../../../utils";
 
 export default function Transactions() {
   const TRANSACTION_TYPES = {
@@ -9,7 +12,39 @@ export default function Transactions() {
     payment: 'Pagamento',
   };
 
+  const [loading, setLoading] = useState(false);
+  const [transactions, setTransactions] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
+
+  const getMonth = (date: string) => {
+    const $d = new Date(date);
+  
+    return new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format($d);
+  }
+
+  const getCompleteDate = (date: string) => {
+    const $d = new Date(date);
+  
+    const { hour, minute, day, month, year} = formatDate($d);
+
+    return `${hour}h${String(minute).padStart(2, '0')} - ${day}/${month}/${year}`;
+  };
+
+  const getTransactionsList = async () => {
+    setLoading(true);
+    try {
+      const data = await getTransactions();
+      setTransactions(data);
+    } catch (err) {
+      console.log('errorGettingTransactions');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getTransactionsList();
+  }, []);
 
   return (
     <>
@@ -17,7 +52,7 @@ export default function Transactions() {
         Extrato da conta
         <i className="ms-2 fa-solid fa-cash-register"></i>
       </h4>
-
+      
       <div style={{ gap: 8, cursor: 'pointer' }} className="d-flex flex-wrap py-3">
         {TRANSACTION_TYPES && Object.entries(TRANSACTION_TYPES).map(([key, value]) => (
           <span 
@@ -38,27 +73,46 @@ export default function Transactions() {
         ></input>
         <span className="input-group-text" id="basic-addon2">Busca</span>
       </div>
+      
+      {(
+        loading &&
+        <span
+          className="spinner-border spinner-border-sm text-center mt-3 text-success d-block mx-auto"
+          role="status"
+          aria-hidden="true"
+        ></span>
+      )}
 
-      <section className="list-group mt-3">
-        <div style={{ cursor: 'pointer' }} className="list-group-item py-3" aria-current="true">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <small>
-              <strong className="text-success">
-                <i className="me-2 fa-solid fa-calendar-days"></i>
-                Abril
-              </strong>
-            </small>
-            <div style={{ gap: 8 }} className="d-flex align-items-center">
-              <span className="badge rounded-pill bg-secondary">Depósito</span>
-              <i className="fa-solid fa-edit text-success"></i>
+      {(
+        (!loading && !transactions.length) &&
+        <small className="d-block py-3 text-muted">Você ainda não possui transações</small>
+      )}
+
+      {(
+        (!loading && transactions?.length) &&
+        transactions.map((transaction: Transaction, index) => (
+          <section className="list-group mt-3" key={index}>
+            <div style={{ cursor: 'pointer' }} className="list-group-item py-3" aria-current="true">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <small>
+                  <strong className="text-success text-capitalize">
+                    <i className="me-2 fa-solid fa-calendar-days"></i>
+                    {getMonth(transaction.date)}
+                  </strong>
+                </small>
+                <div style={{ gap: 8 }} className="d-flex align-items-center">
+                  <span className="badge rounded-pill bg-secondary">{TRANSACTION_TYPES[transaction.type]}</span>
+                  <i className="fa-solid fa-edit text-success"></i>
+                </div>
+              </div>
+              <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
+                <small className="text-capitalize">{transaction.description}</small>
+                <small className="text-muted">{ getCompleteDate(transaction.date) }</small>
+              </div>
             </div>
-          </div>
-          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
-            <small>Mercearia do Juquinha</small>
-            <small className="text-muted">12h30 - 12/04/25</small>
-          </div>
-        </div>
-      </section>
+          </section>
+        ))
+      )}
     </>
   )
 }

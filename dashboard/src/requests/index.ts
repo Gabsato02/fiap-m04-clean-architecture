@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:3000';
 
 const getAuthToken = (): string => {
-  return localStorage.getItem('authToken') || '';
+  return localStorage.getItem('bytebank-auth') || '';
 };
 
 interface RequestOptions extends RequestInit {

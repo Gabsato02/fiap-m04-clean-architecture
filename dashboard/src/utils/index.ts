@@ -31,8 +31,8 @@ export function getCurrentDate($date?: Date) {
   return formatDate($date || currentDate);
 };
 
-export const formatCurrency = (v: number) => v.toLocaleString('pt-BR', {
+export const formatCurrency = (v: number, fractionDigits: number = 2) => v.toLocaleString('pt-BR', {
   style: 'currency',
   currency: 'BRL',
-  minimumFractionDigits: 2,
+  minimumFractionDigits: fractionDigits,
 });

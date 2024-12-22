@@ -1,12 +1,43 @@
 {
   "users": [
     {
-      "id": 1734887897431,
-      "username": "Gabriel",
-      "email": "sato@gmail.com",
-      "password": "123456",
-      "balance": 0
+      "id": 1734893944620,
+      "username": "Israel 2",
+      "email": "teste@gmail.com",
+      "password": "testes",
+      "balance": 96,
+      "history": [
+        0,
+        -35,
+        -9,
+        96
+      ]
     }
   ],
-  "transactions": []
+  "transactions": [
+    {
+      "id": 1734893980284,
+      "userId": 1734893944620,
+      "description": "Adega do zezinho",
+      "amount": -35,
+      "type": "payment",
+      "date": "2024-12-22T18:59:40.284Z"
+    },
+    {
+      "id": 1734893991528,
+      "userId": 1734893944620,
+      "description": "Adega do zezinho",
+      "amount": 26,
+      "type": "payment",
+      "date": "2024-12-22T18:59:51.528Z"
+    },
+    {
+      "id": 1734894006493,
+      "userId": 1734893944620,
+      "description": "Adega do zezinho",
+      "amount": 105,
+      "type": "payment",
+      "date": "2024-12-22T19:00:06.493Z"
+    }
+  ]
 }

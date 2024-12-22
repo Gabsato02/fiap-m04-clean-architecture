@@ -30,6 +30,15 @@ const createTransaction = (req, res) => {
 	};
 
 	db.transactions.push(newTransaction);
+
+	const userIndex = db.users.findIndex(({ id }) => id == req.user.id);
+	
+	const newBalance = db.users[userIndex].balance + amount;
+	console.log(userIndex, newBalance, db.users);
+	db.users[userIndex].balance = newBalance;
+
+	db.users[userIndex]?.history.push(newBalance);
+
 	dbService.writeDB(db);
 	res.status(201).json(newTransaction);
 };
@@ -52,7 +61,9 @@ const updateTransaction = (req, res) => {
 		...db.transactions[transactionIndex],
 		...(description && { description }),
 	};
+
 	db.transactions[transactionIndex] = updatedTransaction;
+
 	dbService.writeDB(db);
 
 	res.json(updatedTransaction);

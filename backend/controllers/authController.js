@@ -4,7 +4,7 @@ const jwtUtils = require('../utils/jwtUtils');
 // Criar Usuário
 const createUser = (req, res) => {
 	const db = dbService.readDB();
-	const newUser = { id: Date.now(), ...req.body, balance: 0 };
+	const newUser = { id: Date.now(), ...req.body, balance: 0, history: [0] };
 	db.users.push(newUser);
 	dbService.writeDB(db);
 	res.status(201).json(newUser);

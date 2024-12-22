@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { getCurrentDate } from "../../../utils";
+import { formatCurrency, getCurrentDate } from "../../../utils";
+import { useRecoilValue } from "recoil";
+import { userInfoAtom } from "../../../store/atoms";
 
 export default function Extract() {
+  const userInfo = useRecoilValue(userInfoAtom);
+
   const { day, month, week_day, year } = getCurrentDate();
 
   const formattedDate = `${week_day}, ${day}/${month}/${year}`;
@@ -11,7 +15,7 @@ export default function Extract() {
   return (
     <div className="card">
       <div className="card-body">
-        <h5 className="card-title text-success">Olá, Usuário!</h5>
+        <h5 className="card-title text-success">{`Olá, ${userInfo?.username || 'Usuário'}!`}</h5>
         <p
           style={{ cursor: 'pointer' }}
           className="card-text cursor-pointer d-flex align-items-center"
@@ -21,7 +25,9 @@ export default function Extract() {
           <i className={`ms-2 fa-solid fa-${showExtractValue ? 'eye-slash' : 'eye'} fa-md text-success`}></i>
         </p>
         <p className="card-text display-6">
-          <strong style={showExtractValue ? {} : { filter: 'blur(10px)' }}>R$ 1000</strong>
+          <strong style={showExtractValue ? {} : { filter: 'blur(10px)' }}>
+            {formatCurrency(userInfo?.balance || 0)}
+          </strong>
         </p>
       </div>
       <div className="card-footer text-capitalize text-muted">

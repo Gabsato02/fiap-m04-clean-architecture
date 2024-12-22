@@ -53,6 +53,7 @@
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
     "chart.js": "^4.4.7",
+    "recoil": "^0.7.7",
     "regenerator-runtime": "^0.14.1",
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1"

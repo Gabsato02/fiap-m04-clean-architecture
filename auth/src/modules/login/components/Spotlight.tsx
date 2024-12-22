@@ -7,7 +7,7 @@ export default function Spotlight() {
     <section className="bg-light h-100 py-5 mt-5 rounded-lg">
       <div className="container">
         <h1 className="display-4 text-success">Seja bem vindo ao Bytebank</h1>
-        <div className="d-flex flex-column flex-md-row align-items-md-center py-md-5">
+        <div className="d-flex flex-column flex-lg-row align-items-md-center py-md-5">
           <img src={spotlightImage} className="img-fluid d-none d-md-block" alt="..."></img>
           <img src={spotlightImageMobile} className="d-block d-md-none img-fluid" alt="..."></img>
           <p className="lead ms-md-5 mt-5 mt-md-0">Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!</p>

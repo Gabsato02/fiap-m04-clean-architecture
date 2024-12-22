@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "declarationDir": "dist",
+    "lib": ["DOM", "ES6"],
     "typeRoots": ["./node_modules/@types"],
     "types": ["react", "react-dom"],
   },

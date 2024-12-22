@@ -7,7 +7,7 @@ export default function Nav() {
         <a className="navbar-brand" href="#">Bytebank</a>
         
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
+          <i className="fa-solid fa-bars"></i>
         </button>
 
         <div className="collapse navbar-collapse" id="navbarTogglerDemo02">

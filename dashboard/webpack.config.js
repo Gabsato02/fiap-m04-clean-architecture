@@ -13,6 +13,6 @@ module.exports = (webpackConfigEnv, argv) => {
 		devServer: {
 			hot: false, // Desativa o HMR
 		},
-		externals: ['chart.js'],
+		externals: ['chart.js', 'single-spa'],
 	});
 };

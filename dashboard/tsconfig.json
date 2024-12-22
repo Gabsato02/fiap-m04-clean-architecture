@@ -2,9 +2,12 @@
   "extends": "ts-config-single-spa",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "lib": ["DOM", "ES6", "es2022"],
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["react", "react-dom"],
   },
-  "files": ["src/bytebank-dashboard.tsx"],
+  "files": ["src/bytebank-auth.tsx"],
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test*"]
 }

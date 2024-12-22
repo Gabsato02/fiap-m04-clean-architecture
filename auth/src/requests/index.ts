@@ -1,20 +1,23 @@
 const BASE_URL = 'http://localhost:3000'; // Substitua pelo URL base da sua API
 
+// Função para pegar o token de autenticação do localStorage
 const getAuthToken = (): string => {
   return localStorage.getItem('authToken') || '';
 };
 
+// Definição dos tipos de RequestOptions
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
 }
 
+// Função genérica para fazer requisições API
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   try {
     const token = getAuthToken();
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` })
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       ...options,
     });
@@ -30,10 +33,11 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   }
 }
 
+// Objeto API com métodos GET, POST, PUT, DELETE usando a função genérica `request`
 const api = {
   get: async <T>(endpoint: string): Promise<T> =>
     request<T>(endpoint, {
-      method: 'GET'
+      method: 'GET',
     }),
 
   post: async <T>(endpoint: string, payload: unknown): Promise<T> =>

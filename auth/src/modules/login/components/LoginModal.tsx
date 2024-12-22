@@ -1,9 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { navigateToUrl } from 'single-spa';
 import loginImage from '../assets/login-desktop.svg';
 import loginImageMobile from '../assets/login-mobile.svg';
 import { login } from "../services";
 import { Button } from "../../../components";
+import { UserAuth } from "../../../types";
+import { closeModal } from "../../../utils";
 
 export default function LoginModal() {
   const [loading, setLoading] = React.useState(false);
@@ -17,11 +20,17 @@ export default function LoginModal() {
     }
   } = useForm({ mode: 'onChange' });
 
-  const handleLogin = async (payload) => {
+  const handleLogin = async (payload: UserAuth) => {
     setLoading(true);
 
     try {
-      await login(payload);
+      const data = await login(payload);
+
+      if (data.token) localStorage.setItem('bytebank-auth', data.token);
+
+      closeModal('loginModal');
+
+      navigateToUrl('/dashboard');
     } catch (err) {
       console.log('errorLoggingUser');  
       setError(true);    

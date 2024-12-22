@@ -1,10 +1,18 @@
 import 'regenerator-runtime/runtime';
+import { useEffect } from 'react';
+import { navigateToUrl } from 'single-spa';
 import Extract from "../components/Extract";
 import Investments from "../components/Investments";
 import Nav from "../components/Nav";
 import Transactions from "../components/Transactions";
 
 export default function Login(props) {
+  useEffect(() => {
+    const token = localStorage.getItem('bytebank-auth');
+
+    if (!token) navigateToUrl('/login');
+  }, []);
+
   return (
     <div className="bg-light min-vh-100">
       <Nav />

@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": 1734887897431,
+      "username": "Gabriel",
+      "email": "sato@gmail.com",
+      "password": "123456",
+      "balance": 0
+    }
+  ],
+  "transactions": []
+}

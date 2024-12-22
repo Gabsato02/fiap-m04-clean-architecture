@@ -1,9 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { navigateToUrl } from 'single-spa';
 import registerImage from '../assets/register-desktop.svg';
 import registerImageMobile from '../assets/register-mobile.svg';
 import { Button } from "../../../components";
-import { createUser } from "../services";
+import { createUser, login } from "../services";
+import { AuthReturn } from "../../../types";
+import { closeModal } from "../../../utils";
 
 export default function RegisterModal() {
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
@@ -26,6 +29,17 @@ export default function RegisterModal() {
       const { disclaimer, passwordConfirm, ...payload } = form;
 
       await createUser(payload);
+
+      const data = await login({
+        email: payload.email,
+        password: payload.password,
+      });
+
+      if (data.token) localStorage.setItem('bytebank-auth', data.token);
+
+      closeModal('registerModal');
+
+      navigateToUrl('/dashboard');
     } catch (err) {
       console.log('errorCreatingUser');      
     } finally {

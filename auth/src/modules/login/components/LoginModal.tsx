@@ -7,6 +7,7 @@ import { login } from "../services";
 import { Button } from "../../../components";
 import { UserAuth } from "../../../types";
 import { closeModal } from "../../../utils";
+import { AUTH_TOKEN } from "../../../vars";
 
 export default function LoginModal() {
   const [loading, setLoading] = React.useState(false);
@@ -26,7 +27,7 @@ export default function LoginModal() {
     try {
       const data = await login(payload);
 
-      if (data.token) localStorage.setItem('bytebank-auth', data.token);
+      if (data.token) localStorage.setItem(AUTH_TOKEN, data.token);
 
       closeModal('loginModal');
 

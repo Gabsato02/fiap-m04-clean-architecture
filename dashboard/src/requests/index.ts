@@ -1,7 +1,9 @@
+import { AUTH_TOKEN } from "../vars";
+
 const BASE_URL = 'http://localhost:3000';
 
 const getAuthToken = (): string => {
-  return localStorage.getItem('bytebank-auth') || '';
+  return localStorage.getItem(AUTH_TOKEN) || '';
 };
 
 interface RequestOptions extends RequestInit {

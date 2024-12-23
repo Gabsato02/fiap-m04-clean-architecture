@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 import { getUser } from '../services';
 import { navigateToUrl } from 'single-spa';
 import { userInfoAtom } from '../../../store/atoms';
+import { AUTH_TOKEN } from '../../../vars';
 
 export default function Nav() {
   const [userInfo, setUserInfo] = useRecoilState(userInfoAtom);
@@ -14,10 +15,15 @@ export default function Nav() {
     } catch (err) {
       console.log('errorGettingUserInfo');
     }
-  }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(AUTH_TOKEN);
+    navigateToUrl('/login'); 
+  };
 
   React.useEffect(() => {
-    const token = localStorage.getItem('bytebank-auth');
+    const token = localStorage.getItem(AUTH_TOKEN);
 
     if (!token) {
       navigateToUrl('/login');
@@ -32,14 +38,21 @@ export default function Nav() {
       <div className="container">
         <a className="navbar-brand" href="#">Bytebank</a>
         <ul className="navbar-nav">
-          <li className="nav-item d-flex flex-row align-items-center">
-            <a className="nav-link active" aria-current="page" href="#">{ userInfo?.username || 'Usuário' }</a>
-            <div 
-              className="ms-3 rounded-circle border border-success d-flex justify-content-center align-items-center"
-              style={{width: 35, height: 35}}
-            >
-              <i className="fas fa-user-alt fa-md text-success"></i>
-            </div>
+          <li className="nav-item dropdown">
+            <a className="dropdown-toggle nav-link active d-flex flex-row align-items-center" aria-current="page" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              { userInfo?.username || 'Usuário' }
+              <div 
+                className="ms-3 rounded-circle border border-success d-flex justify-content-center align-items-center"
+                style={{width: 35, height: 35}}
+              >
+                <i className="fas fa-user-alt fa-md text-success"></i>
+              </div>
+            </a>
+            <ul className="dropdown-menu position-absolute">
+              <li onClick={handleLogout}>
+                <span style={{ cursor: 'pointer' }} className="dropdown-item">Deslogar</span>
+              </li>
+            </ul>
           </li>
         </ul>
       </div>

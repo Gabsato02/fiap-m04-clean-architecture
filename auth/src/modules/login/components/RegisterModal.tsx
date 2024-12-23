@@ -7,6 +7,7 @@ import { Button } from "../../../components";
 import { createUser, login } from "../services";
 import { AuthReturn } from "../../../types";
 import { closeModal } from "../../../utils";
+import { AUTH_TOKEN } from "../../../vars";
 
 export default function RegisterModal() {
   const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
@@ -35,7 +36,7 @@ export default function RegisterModal() {
         password: payload.password,
       });
 
-      if (data.token) localStorage.setItem('bytebank-auth', data.token);
+      if (data.token) localStorage.setItem(AUTH_TOKEN, data.token);
 
       closeModal('registerModal');
 

@@ -1,6 +1,6 @@
 # Projeto FIAP M02 React Microfrontend
 
-Este projeto contém três microfrontends desenvolvidos em React, além de um servidor backend simples utilizando `json-server`. Cada serviço é contido em uma pasta separada, e o projeto utiliza `Docker` e `Docker Compose` para orquestração e execução.
+Este projeto contém quatro microfrontends desenvolvidos em React, além de um servidor backend simples utilizando `json-server`. Cada serviço é contido em uma pasta separada, e o projeto utiliza `Docker` e `Docker Compose` para orquestração e execução.
 
 ## Estrutura do Projeto
 
@@ -15,6 +15,9 @@ Este projeto contém três microfrontends desenvolvidos em React, além de um se
 ├── fiap-m02-react-microfrontend-auth
 │   ├── Dockerfile
 │   └── (código React de autenticação)
+├── fiap-m02-react-microfrontend-notfound
+│   ├── Dockerfile
+│   └── (código React de fallback de rotas)
 ├── fiap-m02-react-microfrontend-orchestrator
 │   ├── Dockerfile
 │   └── (código React do orchestrator)
@@ -38,7 +41,12 @@ Este projeto contém três microfrontends desenvolvidos em React, além de um se
    - Descrição: Microfrontend em React que gerencia autenticação e criação de usuário.
    - Porta: `8500`
 
-4. **Orchestrator**
+4. **Not Found**
+   - Local: `fiap-m02-react-microfrontend-notfound`
+   - Descrição: Microfrontend em React para fallback de rotas.
+   - Porta: `8500`
+
+5. **Orchestrator**
    - Local: `fiap-m02-react-microfrontend-orchestrator`
    - Descrição: Microfrontend em React que orquestra os demais microfrontends.
    - Porta: `9000`
@@ -75,6 +83,7 @@ os comandos para build local:
 - **Backend**: `json-server --watch db.json --port 3000`
 - **Dashboard**: `npm start -- --port 8501`
 - **Auth**: `npm start -- --port 8500`
+- **Not Found**: `npm start -- --port 8502`
 - **Orchestrator**: `npm start`
 
 ### 3. Verificar os Serviços
@@ -84,6 +93,7 @@ Acesse os serviços nos seguintes endereços:
 - **Backend**: [http://localhost:3000](http://localhost:3000)
 - **Dashboard**: [http://localhost:8501](http://localhost:8501) ou [http://localhost:9000/dashboard](http://localhost:9000/dashboard)
 - **Auth**: [http://localhost:8500](http://localhost:8500) ou [http://localhost:9000/login](http://localhost:9000/login)
+- **Not Found**: [http://localhost:8502](http://localhost:8502) ou [http://localhost:9000/*](http://localhost:9000/*)
 - **Orchestrator**: [http://localhost:9000](http://localhost:9000)
 
 ## Comandos Úteis

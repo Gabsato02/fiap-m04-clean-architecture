@@ -84,7 +84,7 @@ export default function LoginModal() {
                 </div>
               </div>
               <div className="mb-3 text-end">
-                <a href="#" className="text-decoration-none text-danger">
+                <a href="/recuperar-senha" className="text-decoration-none text-danger">
                   <small>Esqueci minha senha</small>
                 </a>
               </div>

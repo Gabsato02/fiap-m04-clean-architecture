@@ -19,14 +19,14 @@ export default function Nav() {
 
   const handleLogout = () => {
     localStorage.removeItem(AUTH_TOKEN);
-    navigateToUrl('/login'); 
+    navigateToUrl('/'); 
   };
 
   React.useEffect(() => {
     const token = localStorage.getItem(AUTH_TOKEN);
 
     if (!token) {
-      navigateToUrl('/login');
+      navigateToUrl('/');
     }
     else {
       getUserInfo();
@@ -36,10 +36,13 @@ export default function Nav() {
   return (
     <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a className="navbar-brand" href="#">Bytebank</a>
+        <a className="navbar-brand" href="/">Bytebank</a>
         <ul className="navbar-nav">
           <li className="nav-item dropdown">
-            <a className="dropdown-toggle nav-link active d-flex flex-row align-items-center" aria-current="page" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div
+              style={{ cursor: 'pointer' }}
+              className="dropdown-toggle nav-link active d-flex flex-row align-items-center"
+              aria-current="page"data-bs-toggle="dropdown" aria-expanded="false">
               { userInfo?.username || 'Usuário' }
               <div 
                 className="ms-3 rounded-circle border border-success d-flex justify-content-center align-items-center"
@@ -47,7 +50,7 @@ export default function Nav() {
               >
                 <i className="fas fa-user-alt fa-md text-success"></i>
               </div>
-            </a>
+            </div>
             <ul className="dropdown-menu position-absolute">
               <li onClick={handleLogout}>
                 <span style={{ cursor: 'pointer' }} className="dropdown-item">Deslogar</span>

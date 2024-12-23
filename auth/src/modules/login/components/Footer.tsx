@@ -10,16 +10,16 @@ export default function Footer() {
 
             <ul className="list-unstyled mb-0 mt-3 fw-light">
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">Serviços</a>
+                <a href="/servicos" className="text-decoration-none text-white-50">Serviços</a>
               </li>
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">Conta corrente</a>
+                <a href="/conta" className="text-decoration-none text-white-50">Conta corrente</a>
               </li>
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">Conta PJ</a>
+                <a href="/conta" className="text-decoration-none text-white-50">Conta PJ</a>
               </li>
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">Cartão de crédito</a>
+                <a href="/cartao" className="text-decoration-none text-white-50">Cartão de crédito</a>
               </li>
             </ul>
           </div>
@@ -29,16 +29,16 @@ export default function Footer() {
 
             <ul className="list-unstyled mt-3">
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">0800 004 250 08</a>
+                <a href="tel:080000425008" className="text-decoration-none text-white-50">0800 004 250 08</a>
               </li>
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">contato@bytebank.com.br</a>
+                <a href="mailto:contato@bytebank.com.br" className="text-decoration-none text-white-50">contato@bytebank.com.br</a>
               </li>
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">ouvidoria@bytebank.com.br</a>
+                <a href="mailto:ouvidoria@bytebank.com.br" className="text-decoration-none text-white-50">ouvidoria@bytebank.com.br</a>
               </li>
               <li className="py-1">
-                <a href="#!" className="text-decoration-none text-white-50">Trabalhe conosco</a>
+                <a href="/trabalhe-conosco" className="text-decoration-none text-white-50">Trabalhe conosco</a>
               </li>
             </ul>
           </div>

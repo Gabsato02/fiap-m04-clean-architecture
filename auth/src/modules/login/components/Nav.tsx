@@ -4,7 +4,7 @@ export default function Nav() {
   return (
     <nav className="navbar fixed-top navbar-dark bg-dark navbar-expand-lg">
       <div className="container">
-        <a className="navbar-brand" href="#">Bytebank</a>
+        <a className="navbar-brand" href="/">Bytebank</a>
         
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
           <i className="fa-solid fa-bars"></i>
@@ -13,10 +13,10 @@ export default function Nav() {
         <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link text-success" aria-current="page" href="#">Sobre</a>
+              <a className="nav-link text-success" aria-current="page" href="/sobre">Sobre</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link text-success" href="#">Serviços</a>
+              <a className="nav-link text-success" href="/servicos">Serviços</a>
             </li>
           </ul>
           <div className="d-flex justify-content-end gx-1 ms-auto">

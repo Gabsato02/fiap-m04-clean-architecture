@@ -21,6 +21,7 @@ export default function TransactionModal() {
     handleSubmit,
     control,
     formState: { errors },
+    reset
   } = useForm<TransactionForm>({ mode: "onChange" });
 
   const handleCreateTransaction = async (form: TransactionForm) => {
@@ -39,6 +40,12 @@ export default function TransactionModal() {
       const newTransaction = await createTransaction(payload);
 
       setTransactions((prevTransactions) => [...prevTransactions, newTransaction]);
+
+      reset({
+        description: "",
+        amount: "",
+        type: "",
+      });
 
       closeModal("transactionModal");
     } catch (err) {
@@ -112,7 +119,7 @@ export default function TransactionModal() {
                       decimalScale={2}
                       fixedDecimalScale={true}
                       onValueChange={(values) => {
-                        field.onChange(values.value); 
+                        field.onChange(values.value);
                       }}
                     />
                   )}

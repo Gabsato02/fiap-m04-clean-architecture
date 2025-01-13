@@ -2,9 +2,9 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { useRecoilState } from "recoil";
-import { createTransaction } from "../services";
+import { createTransaction, getUser } from "../services";
 import { closeModal } from "../../../utils";
-import { transactionsState } from "../../../store/atoms";
+import { transactionsState, userInfoAtom } from "../../../store/atoms";
 
 type TransactionForm = {
   description: string;
@@ -15,6 +15,7 @@ type TransactionForm = {
 export default function TransactionModal() {
   const [loading, setLoading] = React.useState(false);
   const [transactions, setTransactions] = useRecoilState(transactionsState)
+  const [userInfo, setUserInfo] = useRecoilState(userInfoAtom)
 
   const {
     register,
@@ -40,6 +41,9 @@ export default function TransactionModal() {
       const newTransaction = await createTransaction(payload);
 
       setTransactions((prevTransactions) => [...prevTransactions, newTransaction]);
+
+      const newUserInfo = await getUser();
+      setUserInfo(newUserInfo)
 
       reset({
         description: "",

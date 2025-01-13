@@ -1,8 +1,10 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
+import { useRecoilState } from "recoil";
 import { createTransaction } from "../services";
 import { closeModal } from "../../../utils";
+import { transactionsState } from "../../../store/atoms";
 
 type TransactionForm = {
   description: string;
@@ -12,6 +14,7 @@ type TransactionForm = {
 
 export default function TransactionModal() {
   const [loading, setLoading] = React.useState(false);
+  const [transactions, setTransactions] = useRecoilState(transactionsState)
 
   const {
     register,
@@ -33,12 +36,11 @@ export default function TransactionModal() {
         amount: type === "deposit" ? numericAmount : -Math.abs(numericAmount),
       };
 
-      await createTransaction(payload);
-      console.log("Transação criada: ", payload);
+      const newTransaction = await createTransaction(payload);
+
+      setTransactions((prevTransactions) => [...prevTransactions, newTransaction]);
 
       closeModal("transactionModal");
-
-      window.location.reload(); // Rever isso depois
     } catch (err) {
       console.error("Erro ao criar transação: ", err);
     } finally {

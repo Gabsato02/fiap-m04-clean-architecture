@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getTransactions } from "../services";
 import { Transaction } from "../../../types";
 import { formatDate } from "../../../utils";
+import { useRecoilState } from "recoil";
+import { transactionsState } from "../../../store/atoms";
 
 export default function Transactions() {
   const TRANSACTION_TYPES = {
@@ -13,7 +15,7 @@ export default function Transactions() {
   };
 
   const [loading, setLoading] = useState(false);
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useRecoilState(transactionsState)
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   const getMonth = (date: string) => {

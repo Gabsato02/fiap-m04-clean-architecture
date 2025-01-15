@@ -4,6 +4,7 @@ import { Transaction } from "../../../types";
 import { formatDate } from "../../../utils";
 import { useRecoilState } from "recoil";
 import { transactionsState } from "../../../store/atoms";
+import TransactionModal from "./TransactionModal";
 
 export default function Transactions() {
   const TRANSACTION_TYPES = {
@@ -17,6 +18,7 @@ export default function Transactions() {
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useRecoilState(transactionsState)
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const getMonth = (date: string) => {
     const $d = new Date(date);
@@ -43,6 +45,10 @@ export default function Transactions() {
       setLoading(false);
     }
   }
+
+  const handleEditClick = (transaction) => {
+    setSelectedTransaction(transaction); // Define a transação selecionada
+  };
 
   useEffect(() => {
     getTransactionsList();
@@ -106,7 +112,11 @@ export default function Transactions() {
                 </small>
                 <div style={{ gap: 8 }} className="d-flex align-items-center">
                   <span className="badge rounded-pill bg-secondary">{TRANSACTION_TYPES[transaction.type]}</span>
-                  <i className="fa-solid fa-edit text-success"></i>
+                  <i className="fa-solid fa-edit text-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#transactionModal"
+                    onClick={() => handleEditClick(transaction)}
+                  ></i>
                 </div>
               </div>
               <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
@@ -117,6 +127,8 @@ export default function Transactions() {
           </section>
         ))
       )}
+
+      <TransactionModal transaction={selectedTransaction} />
     </>
   )
 }

@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { useRecoilState } from "recoil";
-import { createTransaction, getUser } from "../services";
+import {
+  createTransaction,
+  editTransaction,
+  getTransactions,
+  getUser,
+} from "../services";
 import { closeModal } from "../../../utils";
 import { transactionsState, userInfoAtom } from "../../../store/atoms";
 
@@ -12,18 +17,24 @@ type TransactionForm = {
   type: string;
 };
 
-export default function TransactionModal() {
+export default function TransactionModal({ transaction }) {
   const [loading, setLoading] = React.useState(false);
-  const [transactions, setTransactions] = useRecoilState(transactionsState)
-  const [userInfo, setUserInfo] = useRecoilState(userInfoAtom)
+  const [transactions, setTransactions] = useRecoilState(transactionsState);
+  const [userInfo, setUserInfo] = useRecoilState(userInfoAtom);
 
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-    reset
+    reset,
   } = useForm<TransactionForm>({ mode: "onChange" });
+
+  useEffect(() => {
+    if (transaction) {
+      reset(transaction);
+    }
+  }, [transaction, reset]);
 
   const handleCreateTransaction = async (form: TransactionForm) => {
     setLoading(true);
@@ -40,10 +51,13 @@ export default function TransactionModal() {
 
       const newTransaction = await createTransaction(payload);
 
-      setTransactions((prevTransactions) => [...prevTransactions, newTransaction]);
+      setTransactions((prevTransactions) => [
+        ...prevTransactions,
+        newTransaction,
+      ]);
 
       const newUserInfo = await getUser();
-      setUserInfo(newUserInfo)
+      setUserInfo(newUserInfo);
 
       reset({
         description: "",
@@ -56,6 +70,34 @@ export default function TransactionModal() {
       console.error("Erro ao criar transação: ", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditTransaction = async (form: TransactionForm) => {
+    try {
+      const { description } = form;
+
+      const payload = {
+        description,
+      };
+
+      await editTransaction(payload, transaction.id);
+
+      const allTransactions = await getTransactions();
+      setTransactions(allTransactions);
+
+      const newUserInfo = await getUser();
+      setUserInfo(newUserInfo);
+
+      reset({
+        description: "",
+        amount: "",
+        type: "",
+      });
+
+      closeModal("transactionModal");
+    } catch (err) {
+      console.error("Erro ao editar transação: ", err);
     }
   };
 
@@ -84,7 +126,7 @@ export default function TransactionModal() {
             <form
               className="mt-3"
               noValidate
-              onSubmit={handleSubmit(handleCreateTransaction)}
+              onSubmit={handleSubmit(transaction? handleEditTransaction : handleCreateTransaction)}
             >
               <div className="mb-3">
                 <label htmlFor="description" className="form-label">
@@ -92,13 +134,19 @@ export default function TransactionModal() {
                 </label>
                 <input
                   type="text"
-                  className={`form-control ${errors.description && "is-invalid"}`}
+                  className={`form-control ${
+                    errors.description && "is-invalid"
+                  }`}
                   id="description"
                   placeholder="Digite a descrição"
-                  {...register("description", { required: "Descrição é obrigatória" })}
+                  {...register("description", {
+                    required: "Descrição é obrigatória",
+                  })}
                 />
                 {errors.description && (
-                  <div className="invalid-feedback">{errors.description.message}</div>
+                  <div className="invalid-feedback">
+                    {errors.description.message}
+                  </div>
                 )}
               </div>
 
@@ -113,7 +161,9 @@ export default function TransactionModal() {
                   render={({ field }) => (
                     <NumericFormat
                       {...field}
-                      className={`form-control ${errors.amount && "is-invalid"}`}
+                      className={`form-control ${
+                        errors.amount && "is-invalid"
+                      }`}
                       id="amount"
                       placeholder="R$ 0,00"
                       thousandSeparator="."
@@ -129,7 +179,9 @@ export default function TransactionModal() {
                   )}
                 />
                 {errors.amount && (
-                  <div className="invalid-feedback">{errors.amount.message}</div>
+                  <div className="invalid-feedback">
+                    {errors.amount.message}
+                  </div>
                 )}
               </div>
 
@@ -158,7 +210,7 @@ export default function TransactionModal() {
                 className="btn btn-success w-100"
                 disabled={loading}
               >
-                {loading ? "Registrando..." : "Registrar"}
+                {loading ? "Salvando..." : "Salvar"}
               </button>
             </form>
           </div>

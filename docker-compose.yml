@@ -19,6 +19,13 @@ services:
       - "8500:8500"
     depends_on:
       - backend
+  notfound:
+    build:
+      context: ./notfound
+    ports:
+      - "8502:8502"
+    depends_on:
+      - backend
   orchestrator:
     build:
       context: ./orchestrator
@@ -28,3 +35,4 @@ services:
       - backend
       - dashboard
       - auth
+      - notfound

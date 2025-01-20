@@ -6,6 +6,7 @@ import Extract from "../components/Extract";
 import Investments from "../components/History";
 import Nav from "../components/Nav";
 import Transactions from "../components/Transactions";
+import TransactionModal from '../components/TransactionModal';
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false
 
@@ -20,8 +21,16 @@ export default function Login(props) {
             <Transactions />
           </div>
           <div style={{ gap: 32 }} className="d-flex flex-column col col-12 col-lg-4 h-100 pt-5 py-lg-5 px-0">
+            <button
+              className='btn btn-success'
+              data-bs-toggle="modal"
+              data-bs-target="#transactionModal"
+            >
+              <i className='fa-solid fa-plus me-2'></i> Adicionar Transação 
+            </button>
             <Extract />
             <Investments />
+            <TransactionModal/>
           </div>
         </div>
       </div>

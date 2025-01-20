@@ -7,7 +7,6 @@
     "typeRoots": ["./node_modules/@types"],
     "types": ["react", "react-dom"],
   },
-  "files": ["src/bytebank-auth.tsx"],
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test*"]
 }

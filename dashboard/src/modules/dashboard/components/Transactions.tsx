@@ -5,6 +5,7 @@ import { formatDate } from "../../../utils";
 import { useRecoilState } from "recoil";
 import { transactionsState } from "../../../store/atoms";
 import TransactionModal from "./TransactionModal";
+import TransactionModalEdit from "./TransactionModalEdit";
 
 export default function Transactions() {
   const TRANSACTION_TYPES = {
@@ -138,7 +139,7 @@ export default function Transactions() {
                   <i
                     className="fa-solid fa-edit text-success"
                     data-bs-toggle="modal"
-                    data-bs-target="#transactionModal"
+                    data-bs-target="#transactionModalEdit"
                     onClick={() => handleEditClick(transaction)}
                   ></i>
                 </div>
@@ -155,7 +156,7 @@ export default function Transactions() {
           </section>
         ))}
 
-      <TransactionModal transaction={selectedTransaction} />
+      <TransactionModalEdit transaction={selectedTransaction} />
     </>
   );
 }

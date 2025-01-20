@@ -30,7 +30,7 @@ export default function Login(props) {
             </button>
             <Extract />
             <Investments />
-            <TransactionModal transaction={null} />
+            <TransactionModal/>
           </div>
         </div>
       </div>

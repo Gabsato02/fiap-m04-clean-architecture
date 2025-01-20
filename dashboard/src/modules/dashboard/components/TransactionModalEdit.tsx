@@ -17,7 +17,7 @@ type TransactionForm = {
   type: string;
 };
 
-export default function TransactionModal() {
+export default function TransactionModalEdit({ transaction }) {
   const [loading, setLoading] = React.useState(false);
   const [transactions, setTransactions] = useRecoilState(transactionsState);
   const [userInfo, setUserInfo] = useRecoilState(userInfoAtom);
@@ -30,25 +30,24 @@ export default function TransactionModal() {
     reset,
   } = useForm<TransactionForm>({ mode: "onChange" });
 
-  const handleCreateTransaction = async (form: TransactionForm) => {
-    setLoading(true);
-    try {
-      const { description, type, amount } = form;
+  useEffect(() => {
+    if (transaction) {
+      reset(transaction);
+    }
+  }, [transaction, reset]);
 
-      const numericAmount = Number(amount.replace(/\D/g, "")) / 100;
+  const handleEditTransaction = async (form: TransactionForm) => {
+    try {
+      const { description } = form;
 
       const payload = {
         description,
-        type,
-        amount: type === "deposit" ? numericAmount : -Math.abs(numericAmount),
       };
 
-      const newTransaction = await createTransaction(payload);
+      await editTransaction(payload, transaction.id);
 
-      setTransactions((prevTransactions) => [
-        ...prevTransactions,
-        newTransaction,
-      ]);
+      const allTransactions = await getTransactions();
+      setTransactions(allTransactions);
 
       const newUserInfo = await getUser();
       setUserInfo(newUserInfo);
@@ -59,27 +58,25 @@ export default function TransactionModal() {
         type: "",
       });
 
-      closeModal("transactionModal");
+      closeModal("transactionModalEdit");
     } catch (err) {
-      console.error("Erro ao criar transação: ", err);
-    } finally {
-      setLoading(false);
+      console.error("Erro ao editar transação: ", err);
     }
   };
 
   return (
     <div
       className="modal fade"
-      id="transactionModal"
+      id="transactionModalEdit"
       tabIndex={-1}
-      aria-labelledby="transactionModalLabel"
+      aria-labelledby="transactionModalLabelEdit"
       aria-hidden="true"
     >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="transactionModalLabel">
-              Adicionar Transação
+              Editar Transação
             </h5>
             <button
               type="button"
@@ -92,7 +89,7 @@ export default function TransactionModal() {
             <form
               className="mt-3"
               noValidate
-              onSubmit={handleSubmit(handleCreateTransaction)}
+              onSubmit={handleSubmit(handleEditTransaction)}
             >
               <div className="mb-3">
                 <label htmlFor="description" className="form-label">
@@ -141,6 +138,7 @@ export default function TransactionModal() {
                       onValueChange={(values) => {
                         field.onChange(values.value);
                       }}
+                      disabled
                     />
                   )}
                 />
@@ -159,6 +157,7 @@ export default function TransactionModal() {
                   className={`form-control ${errors.type && "is-invalid"}`}
                   id="type"
                   {...register("type", { required: "O tipo é obrigatório" })}
+                  disabled
                 >
                   <option value="">Selecione o tipo</option>
                   <option value="deposit">Depósito</option>

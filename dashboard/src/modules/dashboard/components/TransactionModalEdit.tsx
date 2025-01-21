@@ -49,7 +49,7 @@ export default function TransactionModalEdit({ transaction }) {
 
       // Obter todas as transações
       const allTransactions = await getTransactions();
-      setTransactions(allTransactions.transactions); // Corrigir aqui
+      setTransactions(allTransactions.transactions);
 
       // Atualizar informações do usuário
       const newUserInfo = await getUser();

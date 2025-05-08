@@ -4,9 +4,14 @@ const UserRepository = require('../../domain/repositories/userRepository');
 class UserDbRepository extends UserRepository {
 	async create(user) {
 		const _db = db.readDB();
-		_db.users.push({ id: Date.now(), ...user, balance: 0, history: [0] });
+
+		const newUser = { id: Date.now(), ...user, balance: 0, history: [0] };
+		
+		_db.users.push(newUser);
+
 		db.writeDB(_db);
-		return user;
+
+		return newUser;
 	}
 
 	async findByEmail(email) {

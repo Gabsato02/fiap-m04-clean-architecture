@@ -1,0 +1,24 @@
+{
+  "family": "dashboard",
+  "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::257394472401:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "dashboard",
+      "image": "257394472401.dkr.ecr.us-east-1.amazonaws.com/dashboard:latest",
+      "memory": 512,
+      "cpu": 256,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
+}

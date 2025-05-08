@@ -1,3 +1,4 @@
+import { navigateToUrl } from "single-spa";
 import { AUTH_TOKEN } from "../vars";
 
 const BASE_URL = 'http://localhost:3000';
@@ -13,6 +14,12 @@ interface RequestOptions extends RequestInit {
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   try {
     const token = getAuthToken();
+
+    if (!token) {
+      navigateToUrl('/');
+      return;
+    }
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',

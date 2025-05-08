@@ -6,7 +6,7 @@ class UserDbRepository extends UserRepository {
 		const _db = db.readDB();
 
 		const newUser = { id: Date.now(), ...user, balance: 0, history: [0] };
-		
+
 		_db.users.push(newUser);
 
 		db.writeDB(_db);

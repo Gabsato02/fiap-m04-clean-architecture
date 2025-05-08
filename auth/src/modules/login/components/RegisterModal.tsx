@@ -34,6 +34,7 @@ export default function RegisterModal() {
       const data = await login({
         email: payload.email,
         password: payload.password,
+        username: payload.name,
       });
 
       if (data.token) localStorage.setItem(AUTH_TOKEN, data.token);

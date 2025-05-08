@@ -7,8 +7,7 @@ const getUserByEmail = require('../../application/use_cases/auth/getUser')(userR
 
 const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const result = await createUser({ email, password });
+    const result = await createUser(req.body);
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -28,7 +27,7 @@ const login = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const user = await getUserByEmail(req.user.email);
-    res.json({ user });
+    res.json(user);
   } catch (err) {
     res.status(404).json({ error: 'User not found' });
   }

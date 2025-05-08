@@ -1,6 +1,6 @@
-# Projeto FIAP M02 React Microfrontend
+# Projeto FIAP M04 Clean Architecture
 
-Este projeto contém quatro microfrontends desenvolvidos em React, além de um servidor backend simples utilizando `json-server`. Cada serviço é contido em uma pasta separada, e o projeto utiliza `Docker` e `Docker Compose` para orquestração e execução.
+Este projeto contém a refarotação do projeto FIAP-M02 para Clean Architecture. Também foi revisado para melhorar a segurança do sistema. São quatro microfrontends desenvolvidos em React, além de um servidor backend simples utilizando `json-server`. Cada serviço é contido em uma pasta separada, e o projeto utiliza `Docker` e `Docker Compose` para orquestração e execução.
 
 ## Estrutura do Projeto
 

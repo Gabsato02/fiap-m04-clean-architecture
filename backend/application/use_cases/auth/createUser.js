@@ -1,10 +1,14 @@
+const sanitizationUtils = require('../../../infrastructure/utils/sanitizationUtils');
+
 module.exports = (userRepository, jwtUtils) => {
   return async function createUser(userData) {
-    const existingUser = await userRepository.findByEmail(userData.email);
+    const $userData = sanitizationUtils.sanitizeInput(userData);
 
-    if (existingUser) throw new Error('User already exists');
+    const existingUser = await userRepository.findByEmail($userData.email);
 
-    const newUser = await userRepository.create(userData);
+    if (existingUser) throw new Error('Usuário já existe.');
+
+    const newUser = await userRepository.create($userData);
 
     const token = jwtUtils.generateToken({ email: newUser.email });
   

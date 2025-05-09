@@ -8,19 +8,28 @@ import { AUTH_TOKEN } from '../../../vars';
 export default function Nav() {
   const [userInfo, setUserInfo] = useRecoilState(userInfoAtom);
 
-  const getUserInfo = async () => {
-    try {
-      const data = await getUser();
-      setUserInfo(data);
-    } catch (err) {
-      console.log('errorGettingUserInfo');
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem(AUTH_TOKEN);
     navigateToUrl('/'); 
   };
+
+  const getUserInfo = async () => {
+    try {
+      const data = await getUser();
+
+      if (!Object.keys(data)?.length) {
+        handleLogout();
+        return;
+      }
+
+      setUserInfo(data);
+    } catch (err) {
+      console.log('errorGettingUserInfo', err.message);
+      handleLogout();
+    }
+  };
+
+
 
   React.useEffect(() => {
     const token = localStorage.getItem(AUTH_TOKEN);

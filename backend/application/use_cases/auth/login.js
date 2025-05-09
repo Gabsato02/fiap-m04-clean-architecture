@@ -1,6 +1,10 @@
+const sanitizationUtils = require('../../../infrastructure/utils/sanitizationUtils');
+
 module.exports = (userRepository, jwtUtils) => {
 	return async function loginUser(email, password) {
-		const user = await userRepository.findByEmail(email);
+		const { email: $e } = sanitizationUtils.sanitizeInput({ email });
+
+		const user = await userRepository.findByEmail($e);
 
 		if (!user || user.password !== password) {
 			throw new Error('Credenciais inválidas');

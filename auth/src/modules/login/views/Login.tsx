@@ -16,7 +16,7 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="min-vh-100 bg-light">
+    <div className="min-vh-100 d-flex flex-column bg-light">
       <Nav></Nav>
       <LoginModal></LoginModal>
       <RegisterModal></RegisterModal>

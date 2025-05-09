@@ -23,7 +23,9 @@ class TransactionDbRepository extends TransactionRepository {
 			({ id }) => id === transaction.userId
 		);
 
-		const newBalance = _db.users[userIndex].balance + transaction.amount;
+		const newBalance =
+			_db.users[userIndex].balance +
+			(isNaN(transaction.amount) ? 0 : transaction.amount);
 
 		_db.users[userIndex].balance = newBalance;
 
@@ -41,9 +43,7 @@ class TransactionDbRepository extends TransactionRepository {
 			(t) => t.id === parseInt(id) && t.userId === updatedData.userId
 		);
 
-		if (transactionIndex === -1) {
-			throw new Error('Transação não encontrada');
-		}
+		if (transactionIndex === -1) throw new Error('Transação não encontrada');
 
 		const updatedTransaction = {
 			..._db.transactions[transactionIndex],

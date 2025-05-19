@@ -1,15 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { useRecoilState } from "recoil";
-import {
-  createTransaction,
-  editTransaction,
-  getTransactions,
-  getUser,
-} from "../services";
-import { closeModal } from "../../../utils";
-import { transactionsState, userInfoAtom } from "../../../store/atoms";
+import { createTransaction, getUser } from "../../infrastructure/repositories";
+import { transactionsState, userInfoAtom } from "../../store/atoms";
+import { closeModal } from "../../utils";
 
 type TransactionForm = {
   description: string;
@@ -17,7 +12,7 @@ type TransactionForm = {
   type: string;
 };
 
-export default function TransactionModalEdit({ transaction }) {
+export default function TransactionModal() {
   const [loading, setLoading] = React.useState(false);
   const [transactions, setTransactions] = useRecoilState(transactionsState);
   const [userInfo, setUserInfo] = useRecoilState(userInfoAtom);
@@ -30,57 +25,56 @@ export default function TransactionModalEdit({ transaction }) {
     reset,
   } = useForm<TransactionForm>({ mode: "onChange" });
 
-  useEffect(() => {
-    if (transaction) {
-      reset(transaction);
-    }
-  }, [transaction, reset]);
-
-  const handleEditTransaction = async (form: TransactionForm) => {
+  const handleCreateTransaction = async (form: TransactionForm) => {
+    setLoading(true);
     try {
-      const { description } = form;
+      const { description, type, amount } = form;
+
+      const numericAmount = Number(amount.replace(/\D/g, "")) / 100;
 
       const payload = {
         description,
+        type,
+        amount: type === "deposit" ? numericAmount : -Math.abs(numericAmount),
       };
 
-      // Atualizar a transação
-      await editTransaction(payload, transaction.id);
+      const newTransaction = await createTransaction(payload);
 
-      // Obter todas as transações
-      const allTransactions = await getTransactions();
-      setTransactions(allTransactions.transactions);
+      setTransactions((prevTransactions) => [
+        ...prevTransactions,
+        newTransaction,
+      ]);
 
-      // Atualizar informações do usuário
       const newUserInfo = await getUser();
       setUserInfo(newUserInfo);
 
-      // Resetar o formulário
       reset({
         description: "",
         amount: "",
         type: "",
       });
 
-      closeModal("transactionModalEdit");
+      closeModal("transactionModal");
     } catch (err) {
-      console.error("Erro ao editar transação: ", err);
+      console.error("Erro ao criar transação: ", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div
       className="modal fade"
-      id="transactionModalEdit"
+      id="transactionModal"
       tabIndex={-1}
-      aria-labelledby="transactionModalLabelEdit"
+      aria-labelledby="transactionModalLabel"
       aria-hidden="true"
     >
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="transactionModalLabel">
-              Editar Transação
+              Adicionar Transação
             </h5>
             <button
               type="button"
@@ -93,7 +87,7 @@ export default function TransactionModalEdit({ transaction }) {
             <form
               className="mt-3"
               noValidate
-              onSubmit={handleSubmit(handleEditTransaction)}
+              onSubmit={handleSubmit(handleCreateTransaction)}
             >
               <div className="mb-3">
                 <label htmlFor="description" className="form-label">
@@ -142,7 +136,6 @@ export default function TransactionModalEdit({ transaction }) {
                       onValueChange={(values) => {
                         field.onChange(values.value);
                       }}
-                      disabled
                     />
                   )}
                 />
@@ -161,7 +154,6 @@ export default function TransactionModalEdit({ transaction }) {
                   className={`form-control ${errors.type && "is-invalid"}`}
                   id="type"
                   {...register("type", { required: "O tipo é obrigatório" })}
-                  disabled
                 >
                   <option value="">Selecione o tipo</option>
                   <option value="deposit">Depósito</option>

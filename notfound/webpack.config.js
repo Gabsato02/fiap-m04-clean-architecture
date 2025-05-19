@@ -10,8 +10,27 @@ module.exports = (webpackConfigEnv, argv) => {
   });
 
   return merge(defaultConfig, {
-		devServer: {
-			hot: false, // Desativa o HMR
-		},
-	});
+    devServer: {
+      hot: false, // ⚠️ Desativar HMR por causa de ESM
+      liveReload: true, // ✅ Isso funciona bem
+      port: 8502,
+      host: "0.0.0.0",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+      watchFiles: ["src/**/*"],
+      client: {
+        overlay: true,
+      },
+    },
+    watchOptions: {
+      poll: 1000,
+      ignored: /node_modules/,
+    },
+    output: {
+      filename: "bytebank-notfound.js",
+      publicPath: "http://localhost:8502/",
+    },
+    externals: ["react-hook-form", "axios", "single-spa"],
+  });
 };

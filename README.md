@@ -1,128 +1,144 @@
-# Projeto FIAP M04 Clean Architecture
+# 💻 Projeto: Microfrontends com React + Node.js
 
-Este projeto contém a refarotação do projeto FIAP-M02 para Clean Architecture. Também foi revisado para melhorar a segurança do sistema. São quatro microfrontends desenvolvidos em React, além de um servidor backend simples utilizando `json-server`. Cada serviço é contido em uma pasta separada, e o projeto utiliza `Docker` e `Docker Compose` para orquestração e execução.
+Este repositório implementa uma arquitetura baseada em **microfrontends com React e single-spa**, além de um **backend em Node.js** para autenticação e transações. O projeto é totalmente containerizado com **Docker**, com suporte para **ambiente de desenvolvimento com hot reload** e produção.
 
-## Estrutura do Projeto
+---
 
-```
-/fiap-m02-react-microfrontends (root)
-├── fiap-m02-react-microfrontend-backend
-│   ├── Dockerfile
-│   └── db.json
-├── fiap-m02-react-microfrontend-dashboard
-│   ├── Dockerfile
-│   └── (código React do dashboard)
-├── fiap-m02-react-microfrontend-auth
-│   ├── Dockerfile
-│   └── (código React de autenticação)
-├── fiap-m02-react-microfrontend-notfound
-│   ├── Dockerfile
-│   └── (código React de fallback de rotas)
-├── fiap-m02-react-microfrontend-orchestrator
-│   ├── Dockerfile
-│   └── (código React do orchestrator)
-└── docker-compose.yml
+## 📁 Estrutura do Projeto
+
+```txt
+├── README.md
+├── auth/               # Microfrontend de Autenticação (porta 8500)
+├── backend/            # Backend em Node.js (porta 3000)
+├── dashboard/          # Microfrontend do Dashboard (porta 8501)
+├── notfound/           # Microfrontend de página 404 (porta 8502)
+├── orchestrator/       # Configuração do single-spa root-config (porta 9000)
+├── docker-compose.yml             # Ambiente de produção
+├── docker-compose.dev.yml        # Ambiente de desenvolvimento (hot reload)
+├── tasks/             # Configurações de tarefas por módulo
+├── startall.bat       # Script para iniciar todos os módulos (Windows)
+├── tree.txt           # Estrutura gerada do projeto
+└── treeView.py        # Script Python para geração da tree view
 ```
 
-### Descrição dos Serviços
+---
 
-1. **Backend**
-   - Local: `fiap-m02-react-microfrontend-backend`
-   - Descrição: Servidor JSON utilizando `json-server`.
-   - Porta: `3000`
+## 🚀 Como Executar o Projeto
 
-2. **Dashboard**
-   - Local: `fiap-m02-react-microfrontend-dashboard`
-   - Descrição: Microfrontend em React que fornece o painel do dashboard.
-   - Porta: `8501`
+### ✅ Pré-requisitos
 
-3. **Auth**
-   - Local: `fiap-m02-react-microfrontend-auth`
-   - Descrição: Microfrontend em React que gerencia autenticação e criação de usuário.
-   - Porta: `8500`
-
-4. **Not Found**
-   - Local: `fiap-m02-react-microfrontend-notfound`
-   - Descrição: Microfrontend em React para fallback de rotas.
-   - Porta: `8500`
-
-5. **Orchestrator**
-   - Local: `fiap-m02-react-microfrontend-orchestrator`
-   - Descrição: Microfrontend em React que orquestra os demais microfrontends.
-   - Porta: `9000`
-
-## Pré-requisitos
-
-Certifique-se de ter os seguintes softwares instalados no seu sistema:
-
-- [Docker](https://www.docker.com/get-started)
-- [Docker Compose](https://docs.docker.com/compose/install/) (geralmente incluído com o Docker Desktop)
-
-## Como Executar o Projeto
+- [Node.js 18+](https://nodejs.org/)
+- [Docker + Docker Compose](https://www.docker.com/)
+- [Git](https://git-scm.com/)
 
 ### 1. Clonar o Repositório
 
-Clone este repositório e navegue até o diretório raiz:
-
 ```bash
-git clone https://github.com/Gabsato02/fiap-m02-react-microfrontends
-cd fiap-m02-react-microfrontends
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
 ```
 
-### 2. Construir e Executar os Serviços
-
-No diretório raiz, execute o seguinte comando para construir e subir os containers:
+### 2. Rodar com Docker (Produção)
 
 ```bash
 docker-compose up --build
 ```
 
-Para desenvolvimento, dentro dos respectivos diretórios, execute o `npm install` e depois
-os comandos para build local:
+### 3. Rodar com Docker (Desenvolvimento com Hot Reload)
 
-- **Backend**: `json-server --watch db.json --port 3000`
-- **Dashboard**: `npm start -- --port 8501`
-- **Auth**: `npm start -- --port 8500`
-- **Not Found**: `npm start -- --port 8502`
-- **Orchestrator**: `npm start`
+```bash
+docker-compose -f docker-compose.dev.yml up
+```
 
-### 3. Verificar os Serviços
+### 4. Rodar Localmente Sem Docker
 
-Acesse os serviços nos seguintes endereços:
+Execute cada módulo em terminais separados:
 
-- **Backend**: [http://localhost:3000](http://localhost:3000)
-- **Dashboard**: [http://localhost:8501](http://localhost:8501) ou [http://localhost:9000/dashboard](http://localhost:9000/dashboard)
-- **Auth**: [http://localhost:8500](http://localhost:8500) ou [http://localhost:9000/login](http://localhost:9000/login)
-- **Not Found**: [http://localhost:8502](http://localhost:8502) ou [http://localhost:9000/*](http://localhost:9000/*)
-- **Orchestrator**: [http://localhost:9000](http://localhost:9000)
+#### Backend
 
-## Comandos Úteis
+```bash
+cd backend
+npm install
+node app.js
+```
 
-- **Parar os Serviços**:
-  ```bash
-  docker-compose down
-  ```
+#### Auth (porta 8500)
 
-- **Reiniciar os Serviços**:
-  ```bash
-  docker-compose up
-  ```
+```bash
+cd auth
+npm install
+npm start -- --port 8500
+```
 
-- **Verificar Containers em Execução**:
-  ```bash
-  docker ps
-  ```
+#### Dashboard (porta 8501)
 
-- **Acessar Logs de um Serviço**:
-  ```bash
-  docker logs <nome-do-container>
-  ```
+```bash
+cd dashboard
+npm install
+npm start -- --port 8501
+```
 
-## Notas
+#### NotFound (porta 8502)
 
-- Certifique-se de que as portas necessárias (`3000`, `8501`, `8500`, `9000`) estão livres no seu sistema.
-- Se você encontrar problemas, entre em contato ou verifique os logs dos containers para identificar erros.
-- Ao instalar uma dependência em um dos microfrontends, certifique-se de adicioná-la como dependência externa
-nos arquivos de webpack, localmente via npm e também no `injector-importmap` do microfrontend orquestrador, no arquivo `index.ejs`
+```bash
+cd notfound
+npm install
+npm start -- --port 8502
+```
+
+#### Orchestrator (porta 9000)
+
+```bash
+cd orchestrator
+npm install
+npm start
+```
+
 ---
 
+## 📦 Tecnologias Utilizadas
+
+### Frontend (por microfrontend)
+
+- **React + TypeScript**
+- **Single-SPA**: para orquestração dos microfrontends
+- **Webpack 5** + `webpack-config-single-spa`
+- **Husky** + **Prettier** + **ESLint**: para qualidade de código
+- **Jest** + **Testing Library**: para testes
+
+### Backend
+
+- **Node.js + Express**
+- **JWT (jsonwebtoken)** para autenticação
+- **Cors**, **body-parser**
+- **JSON Server** (mock de banco de dados)
+
+---
+
+## 🧪 Qualidade de Código e Testes
+
+- **Lint:** `npm run lint`
+- **Format:** `npm run format`
+- **Testes:** `npm run test`
+- **Coverage:** `npm run coverage`
+- **Hooks com Husky:** pré-commit, commit-msg e mais
+
+---
+
+## 🧰 Scripts Úteis
+
+| Comando                           | Descrição                                 |
+| --------------------------------- | ----------------------------------------- |
+| `start`                           | Inicia o módulo com hot reload            |
+| `start:standalone`                | Inicia isoladamente o microfrontend       |
+| `lint`                            | Verifica padrões de código                |
+| `format`                          | Aplica formatação com Prettier            |
+| `test`, `coverage`, `watch-tests` | Executa testes com cobertura ou em watch  |
+| `build`, `build:types`            | Gera build de produção e tipos TypeScript |
+
+---
+
+## 📌 Observações
+
+- Todos os módulos seguem convenções semelhantes para facilitar o onboarding.
+- Para garantir isolamento, cada microfrontend tem seu `Dockerfile` e `webpack.config.js` próprio.

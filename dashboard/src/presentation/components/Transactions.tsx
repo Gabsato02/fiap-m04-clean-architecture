@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValueLoadable, useRecoilState } from "recoil";
+import { transactionsByPageSelector } from "../../store/selectors";
 import { Transaction } from "../../domain/entities";
-import { getTransactions } from "../../infrastructure/repositories";
 import { transactionsState } from "../../store/atoms";
 import { formatDate } from "../../utils";
 import TransactionModalEdit from "./TransactionModalEdit";
@@ -15,16 +15,32 @@ export default function Transactions() {
     payment: "Pagamento",
   };
 
-  const [loading, setLoading] = useState(false);
-  const [transactions, setTransactions] = useRecoilState(transactionsState);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
-
-  // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [transactions, setTransactions] = useRecoilState(transactionsState);
+
+  const loadable = useRecoilValueLoadable(transactionsByPageSelector(page));
+
+  useEffect(() => {
+    if (loadable.state === "hasValue") {
+      const newTransactions = loadable.contents;
+      if (newTransactions.length === 0) setHasMore(false);
+      setTransactions((prev) => [...prev, ...newTransactions]);
+    }
+  }, [loadable]);
+
+  const filteredTransactions = transactions.filter(
+    (transaction) =>
+      (selectedFilter === "all" || transaction.type === selectedFilter) &&
+      (transaction.description
+        .toLowerCase()
+        .includes(searchText.toLowerCase()) ||
+        String(transaction.amount).includes(searchText))
+  );
 
   const getMonth = (date: string) => {
     const $d = new Date(date);
@@ -40,37 +56,6 @@ export default function Transactions() {
     )} - ${day}/${month}/${year}`;
   };
 
-  const getTransactionsList = async (currentPage = 1) => {
-    if (!hasMore) return;
-
-    setLoading(true);
-    try {
-      const data = await getTransactions(`?page=${currentPage}&size=10`);
-
-      // Acumular transações
-      setTransactions((prevTransactions) => [
-        ...prevTransactions,
-        ...data.transactions,
-      ]);
-
-      // Verificar se há mais páginas
-      setHasMore(data.transactions.length > 0);
-    } catch (err) {
-      console.log("errorGettingTransactions");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredTransactions = transactions.filter(
-    (transaction) =>
-      (selectedFilter === "all" || transaction.type === selectedFilter) &&
-      (transaction.description
-        .toLowerCase()
-        .includes(searchText.toLowerCase()) || // Busca no campo descrição
-        String(transaction.amount).includes(searchText)) // Busca no campo valor
-  );
-
   const handleEditClick = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
   };
@@ -78,33 +63,28 @@ export default function Transactions() {
   const handleScroll = () => {
     if (
       window.innerHeight + window.scrollY >=
-      document.documentElement.offsetHeight - 100
+        document.documentElement.offsetHeight - 100 &&
+      hasMore &&
+      loadable.state !== "loading"
     ) {
-      if (!loading) {
-        setPage((prevPage) => prevPage + 1);
-      }
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
   useEffect(() => {
-    getTransactionsList(page);
-  }, [page]);
-
-  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [loadable, hasMore]);
 
   return (
     <>
       <h4 className="text-success">
-        Extrato da conta
-        <i className="ms-2 fa-solid fa-cash-register"></i>
+        Extrato da conta <i className="ms-2 fa-solid fa-cash-register"></i>
       </h4>
 
       <div
-        style={{ gap: 8, cursor: "pointer" }}
         className="d-flex flex-wrap py-3"
+        style={{ gap: 8, cursor: "pointer" }}
       >
         {Object.entries(TRANSACTION_TYPES).map(([key, value]) => (
           <span
@@ -126,7 +106,7 @@ export default function Transactions() {
           placeholder="Buscar uma transação"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-        ></input>
+        />
         <span className="input-group-text" id="basic-addon2">
           <i className="fa-solid fa-magnifying-glass"></i>
         </span>
@@ -135,8 +115,8 @@ export default function Transactions() {
       {filteredTransactions.map((transaction: Transaction, index) => (
         <section className="list-group mt-3" key={index}>
           <div
-            style={{ cursor: "pointer" }}
             className="list-group-item py-3"
+            style={{ cursor: "pointer" }}
             aria-current="true"
           >
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -146,7 +126,7 @@ export default function Transactions() {
                   {getMonth(transaction.date)}
                 </strong>
               </small>
-              <div style={{ gap: 8 }} className="d-flex align-items-center">
+              <div className="d-flex align-items-center" style={{ gap: 8 }}>
                 <span className="badge rounded-pill bg-secondary">
                   {TRANSACTION_TYPES[transaction.type]}
                 </span>
@@ -158,6 +138,7 @@ export default function Transactions() {
                 ></i>
               </div>
             </div>
+
             <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
               <small className="text-capitalize">
                 {transaction.description}
@@ -170,7 +151,7 @@ export default function Transactions() {
         </section>
       ))}
 
-      {loading && (
+      {loadable.state === "loading" && (
         <span
           className="spinner-border spinner-border-sm text-center mt-3 text-success d-block mx-auto"
           role="status"
@@ -178,7 +159,7 @@ export default function Transactions() {
         ></span>
       )}
 
-      {!loading && !hasMore && (
+      {!hasMore && (
         <small className="d-block py-3 text-muted text-center">
           Todas as transações foram carregadas.
         </small>

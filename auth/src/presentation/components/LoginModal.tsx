@@ -4,7 +4,7 @@ import { navigateToUrl } from "single-spa";
 import loginImage from "../assets/login-desktop.svg";
 import loginImageMobile from "../assets/login-mobile.svg";
 import { loginUser } from "../../application/usecases"; 
-import Button from "../../components/Button";
+import Button from "./Button";
 import { UserAuth } from "../../domain/entities";
 import { closeModal } from "../../utils";
 import { AUTH_TOKEN } from "../../vars";

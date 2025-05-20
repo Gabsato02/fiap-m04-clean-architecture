@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { navigateToUrl } from 'single-spa';
 import registerImage from '../assets/register-desktop.svg';
 import registerImageMobile from '../assets/register-mobile.svg';
-import { Button } from "../../components";
+import Button from "./Button";
 import { createUser, loginUser } from "../../application/usecases";
 import { AuthReturn } from "../../domain/entities";
 import { closeModal } from "../../utils";

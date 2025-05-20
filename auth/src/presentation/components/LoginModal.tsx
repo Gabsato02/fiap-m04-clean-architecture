@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { navigateToUrl } from "single-spa";
 import loginImage from "../assets/login-desktop.svg";
 import loginImageMobile from "../assets/login-mobile.svg";
-import { login } from "../services";
-import { Button } from "../../../components";
-import { UserAuth } from "../../../types";
-import { closeModal } from "../../../utils";
-import { AUTH_TOKEN } from "../../../vars";
+import { loginUser } from "../../application/usecases"; 
+import Button from "../../components/Button";
+import { UserAuth } from "../../domain/entities";
+import { closeModal } from "../../utils";
+import { AUTH_TOKEN } from "../../vars";
 
 export default function LoginModal() {
   const [loading, setLoading] = React.useState(false);
@@ -29,7 +29,7 @@ export default function LoginModal() {
     setLoading(true);
 
     try {
-      const data = await login(payload);
+      const data = await loginUser(payload);
 
       if (data.token) {
         localStorage.setItem(AUTH_TOKEN, data.token);

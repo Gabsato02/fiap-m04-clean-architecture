@@ -40,8 +40,8 @@ const update = async (req, res) => {
 
 const list = async (req, res) => {
 	try {
-		const transactions = await listTransactions(req.user.id);
-		res.json({ transactions });
+		const resp = await listTransactions(req.user.id, req.query.page, req.query.size);
+		res.json(resp);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}

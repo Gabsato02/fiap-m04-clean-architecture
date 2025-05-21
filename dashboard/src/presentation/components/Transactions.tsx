@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { Transaction } from "../../domain/entities";
 import { getTransactions } from "../../infrastructure/repositories";
 import { transactionsState } from "../../store/atoms";
-import { formatDate } from "../../utils";
+import { formatDate, formatCurrency } from "../../utils";
 import TransactionModalEdit from "./TransactionModalEdit";
 
 export default function Transactions() {
@@ -45,7 +45,7 @@ export default function Transactions() {
 
     setLoading(true);
     try {
-      const data = await getTransactions(`?page=${currentPage}&size=10`);
+      const data = await getTransactions(`?page=${currentPage}&size=5`);
 
       // Acumular transações
       setTransactions((prevTransactions) => [
@@ -140,18 +140,25 @@ export default function Transactions() {
             aria-current="true"
           >
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <small>
-                <strong className="text-success text-capitalize">
-                  <i className="me-2 fa-solid fa-calendar-days"></i>
-                  {getMonth(transaction.date)}
-                </strong>
-              </small>
+              <div  className={ `${transaction.amount > 0 ? 'text-success' : 'text-danger'} text-capitalize d-flex flex-column`}>
+                <small>
+                  <strong>
+                    <i className="me-2 fa-solid fa-calendar-days"></i>
+                    {getMonth(transaction.date)}
+                  </strong>
+                </small>
+                <small className="mt-3">
+                  <strong>
+                    {formatCurrency(transaction.amount)}
+                  </strong>
+                </small>
+              </div>
               <div style={{ gap: 8 }} className="d-flex align-items-center">
                 <span className="badge rounded-pill bg-secondary">
                   {TRANSACTION_TYPES[transaction.type]}
                 </span>
                 <i
-                  className="fa-solid fa-edit text-success"
+                  className="fa-solid fa-edit text-secondary"
                   data-bs-toggle="modal"
                   data-bs-target="#transactionModalEdit"
                   onClick={() => handleEditClick(transaction)}

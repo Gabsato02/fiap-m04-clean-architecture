@@ -1,1 +1,1 @@
-export const AUTH_TOKEN = 'bytebank-auth';
+export const AUTH_TOKEN = "bytebank-auth";

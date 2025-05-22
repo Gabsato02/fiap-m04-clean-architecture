@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useRecoilValueLoadable, useRecoilState } from "recoil";
-import { transactionsByPageSelector } from "../../store/selectors";
+import { useRecoilState } from "recoil";
 import { Transaction } from "../../domain/entities";
+import { getTransactions } from "../../infrastructure/repositories";
 import { transactionsState } from "../../store/atoms";
-import { formatDate } from "../../utils";
+import { formatDate, formatCurrency } from "../../utils";
 import TransactionModalEdit from "./TransactionModalEdit";
 
 export default function Transactions() {
@@ -15,32 +15,15 @@ export default function Transactions() {
     payment: "Pagamento",
   };
 
+  const [transactions, setTransactions] = useRecoilState(transactionsState);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchText, setSearchText] = useState("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
+
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [transactions, setTransactions] = useRecoilState(transactionsState);
-
-  const loadable = useRecoilValueLoadable(transactionsByPageSelector(page));
-
-  useEffect(() => {
-    if (loadable.state === "hasValue") {
-      const newTransactions = loadable.contents;
-      if (newTransactions.length === 0) setHasMore(false);
-      setTransactions((prev) => [...prev, ...newTransactions]);
-    }
-  }, [loadable]);
-
-  const filteredTransactions = transactions.filter(
-    (transaction) =>
-      (selectedFilter === "all" || transaction.type === selectedFilter) &&
-      (transaction.description
-        .toLowerCase()
-        .includes(searchText.toLowerCase()) ||
-        String(transaction.amount).includes(searchText))
-  );
 
   const getMonth = (date: string) => {
     const $d = new Date(date);
@@ -56,6 +39,31 @@ export default function Transactions() {
     )} - ${day}/${month}/${year}`;
   };
 
+  const getTransactionsList = async (currentPage = 1) => {
+    if (!hasMore || loading) return;
+
+    setLoading(true);
+    try {
+      const data = await getTransactions(`?page=${currentPage}&size=10`);
+
+      setTransactions((prev) => [...prev, ...data.transactions]);
+      setHasMore(data.transactions.length > 0);
+    } catch (err) {
+      console.log("Erro ao carregar transações", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTransactions = transactions.filter(
+    (transaction) =>
+      (selectedFilter === "all" || transaction.type === selectedFilter) &&
+      (transaction.description
+        .toLowerCase()
+        .includes(searchText.toLowerCase()) ||
+        String(transaction.amount).includes(searchText))
+  );
+
   const handleEditClick = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
   };
@@ -64,17 +72,20 @@ export default function Transactions() {
     if (
       window.innerHeight + window.scrollY >=
         document.documentElement.offsetHeight - 100 &&
-      hasMore &&
-      loadable.state !== "loading"
+      !loading
     ) {
       setPage((prevPage) => prevPage + 1);
     }
   };
 
   useEffect(() => {
+    getTransactionsList(page);
+  }, [page]);
+
+  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [loadable, hasMore]);
+  }, []);
 
   return (
     <>
@@ -120,25 +131,33 @@ export default function Transactions() {
             aria-current="true"
           >
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <small>
-                <strong className="text-success text-capitalize">
-                  <i className="me-2 fa-solid fa-calendar-days"></i>
-                  {getMonth(transaction.date)}
-                </strong>
-              </small>
-              <div className="d-flex align-items-center" style={{ gap: 8 }}>
+              <div
+                className={`${
+                  transaction.amount > 0 ? "text-success" : "text-danger"
+                } text-capitalize d-flex flex-column`}
+              >
+                <small>
+                  <strong>
+                    <i className="me-2 fa-solid fa-calendar-days"></i>
+                    {getMonth(transaction.date)}
+                  </strong>
+                </small>
+                <small className="mt-3">
+                  <strong>{formatCurrency(transaction.amount)}</strong>
+                </small>
+              </div>
+              <div style={{ gap: 8 }} className="d-flex align-items-center">
                 <span className="badge rounded-pill bg-secondary">
                   {TRANSACTION_TYPES[transaction.type]}
                 </span>
                 <i
-                  className="fa-solid fa-edit text-success"
+                  className="fa-solid fa-edit text-secondary"
                   data-bs-toggle="modal"
                   data-bs-target="#transactionModalEdit"
                   onClick={() => handleEditClick(transaction)}
                 ></i>
               </div>
             </div>
-
             <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
               <small className="text-capitalize">
                 {transaction.description}
@@ -151,7 +170,7 @@ export default function Transactions() {
         </section>
       ))}
 
-      {loadable.state === "loading" && (
+      {loading && (
         <span
           className="spinner-border spinner-border-sm text-center mt-3 text-success d-block mx-auto"
           role="status"
@@ -159,7 +178,7 @@ export default function Transactions() {
         ></span>
       )}
 
-      {!hasMore && (
+      {!loading && !hasMore && (
         <small className="d-block py-3 text-muted text-center">
           Todas as transações foram carregadas.
         </small>

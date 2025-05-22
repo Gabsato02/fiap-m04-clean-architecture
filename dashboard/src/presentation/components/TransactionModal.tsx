@@ -41,8 +41,8 @@ export default function TransactionModal() {
       const newTransaction = await createTransaction(payload);
 
       setTransactions((prevTransactions) => [
-        ...prevTransactions,
         newTransaction,
+        ...prevTransactions,
       ]);
 
       const newUserInfo = await getUser();

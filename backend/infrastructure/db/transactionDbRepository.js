@@ -57,9 +57,39 @@ class TransactionDbRepository extends TransactionRepository {
 		return updatedTransaction;
 	}
 
-	async listByUserId(userId) {
+	async listByUserId(userId, page, size) {
 		const _db = db.readDB();
-		return _db.transactions.filter((t) => t.userId === userId);
+
+		const userTransactions = _db.transactions.filter(
+			(t) => t.userId === userId
+		);
+
+		userTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+		if (page && size) {
+			const pageNumber = parseInt(page, 10);
+			const pageSize = parseInt(size, 10);
+
+			const startIndex = (pageNumber - 1) * pageSize;
+			const endIndex = startIndex + pageSize;
+
+			const paginatedTransactions = userTransactions.slice(
+				startIndex,
+				endIndex
+			);
+
+			return {
+				transactions: paginatedTransactions,
+				total: userTransactions.length,
+				page: pageNumber,
+				size: pageSize,
+			};
+		}
+
+		return {
+			transactions: userTransactions,
+			total: userTransactions.length,
+		};
 	}
 }
 

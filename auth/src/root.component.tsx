@@ -1,4 +1,4 @@
-import Login from "./modules/login/views/Login";
+import Login from "./presentation/views/Login";
 
 export default function Root() {
   return <Login />;

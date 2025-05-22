@@ -31,6 +31,6 @@ module.exports = (webpackConfigEnv, argv) => {
       filename: "bytebank-dashboard.js",
       publicPath: "http://localhost:8501/",
     },
-    externals: ['chart.js', 'single-spa', 'recoil'],
+    externals: ["chart.js", "single-spa", "recoil"],
   });
 };

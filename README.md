@@ -138,6 +138,23 @@ npm start
 
 ---
 
+## 🎯 Atendendo aos Requisitos do Desafio
+
+| Requisito do Desafio                                            | Como foi atendido                                                                                  | Onde no Código                                                                                  |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Arquitetura modular / microfrontends**                        | Cada domínio exposto como micro‑app registrado no single‑spa                                       | `orchestrator/root-config/src/index.js`                                                         |
+| **State Management Pattern avançado**                           | Context API + `useReducer` no Auth e cache automático com **React‑Query**                          | `auth/src/presentation/context/AuthContext.tsx` & `dashboard/src/infrastructure/queryClient.ts` |
+| **Clean Architecture (presentation / domain / infrastructure)** | Pastas `presentation`, `domain`, `infrastructure` em todos os MFEs; entidades e use‑cases isolados | Ex.: `auth/src/domain/entities/User.ts`, `auth/src/domain/usecases/AuthenticateUser.ts`         |
+| **Lazy loading & pré‑carregamento**                             | Importação dinâmica (`React.lazy`) com `webpackPrefetch: true`                                     | `dashboard/src/routes/index.tsx`                                                                |
+| **Armazenamento em cache**                                      | `QueryClient` configurado com `staleTime` e `cacheTime`                                            | `dashboard/src/infrastructure/queryClient.ts`                                                   |
+| **Programação reativa**                                         | Hooks customizados baseados em **RxJS**                                                            | `dashboard/src/infrastructure/observables/useObservable.ts`                                     |
+| **Autenticação segura (JWT)**                                   | Token assinado e verificado no backend                                                             | `backend/src/controllers/authController.js`                                                     |
+| **Criptografia de dados sensíveis**                             | Hash da senha com **bcrypt** antes de persistir                                                    | `backend/src/models/userModel.js`                                                               |
+| **Segurança HTTP**                                              | Middleware **Helmet** + CORS restrito                                                              | `backend/src/app.js` & `backend/src/config/cors.js`                                             |
+| **Otimização de assets para produção**                          | `Dockerfile` multistage (builder → nginx) para cada MFE                                            | `auth/Dockerfile`, `dashboard/Dockerfile`, `notfound/Dockerfile`                                |
+
+---
+
 ## 📌 Observações
 
 - Todos os módulos seguem convenções semelhantes para facilitar o onboarding.

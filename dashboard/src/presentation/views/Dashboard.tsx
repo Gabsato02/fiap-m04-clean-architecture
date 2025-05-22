@@ -1,13 +1,21 @@
-import { RecoilEnv, RecoilRoot } from "recoil";
-import Extract from "../components/Extract";
-import Investments from "../components/History";
+import React, { Suspense, lazy } from "react";
 import Nav from "../components/Nav";
 import TransactionModal from "../components/TransactionModal";
-import Transactions from "../components/Transactions";
+import { RecoilEnv, RecoilRoot } from "recoil";
+
+const Extract = lazy(
+  () => import(/* webpackPrefetch: true */ "../components/Extract")
+);
+const Investments = lazy(
+  () => import(/* webpackPrefetch: true */ "../components/History")
+);
+const Transactions = lazy(
+  () => import(/* webpackPrefetch: true */ "../components/Transactions")
+);
 
 RecoilEnv.RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED = false;
 
-export default function Login(props) {
+export default function Dashboard() {
   return (
     <RecoilRoot>
       <div className="bg-light min-vh-100">
@@ -15,7 +23,13 @@ export default function Login(props) {
         <div className="container h-100 py-5">
           <div className="flex-column-reverse flex-lg-row px-3 px-sm-0 row g-3">
             <div className="col col-12 col-lg-8 h-100 pt-3 py-lg-5 px-0 pe-lg-3">
-              <Transactions />
+              <Suspense
+                fallback={
+                  <div className="text-center">Carregando extrato...</div>
+                }
+              >
+                <Transactions />
+              </Suspense>
             </div>
             <div
               style={{ gap: 32 }}
@@ -28,8 +42,12 @@ export default function Login(props) {
               >
                 <i className="fa-solid fa-plus me-2"></i> Adicionar Transação
               </button>
-              <Extract />
-              <Investments />
+              <Suspense fallback={<div>Carregando saldo...</div>}>
+                <Extract />
+              </Suspense>
+              <Suspense fallback={<div>Carregando gráfico...</div>}>
+                <Investments />
+              </Suspense>
               <TransactionModal />
             </div>
           </div>

@@ -4,6 +4,23 @@ Este repositório implementa uma arquitetura baseada em **microfrontends com Rea
 
 ---
 
+## 🎯 Requisitos do Desafio e Como Foram Atendidos
+
+| Requisito                                                       | Implementação                                                             | Local no Código                                                                                |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Arquitetura modular / microfrontends**                        | Cada domínio como micro‑app registrado no single‑spa                      | `orchestrator/root-config/src/index.js`                                                        |
+| **State Management Pattern avançado**                           | Context API + `useReducer` no Auth e cache automático com **React‑Query** | `auth/src/presentation/context/AuthContext.tsx`, `dashboard/src/infrastructure/queryClient.ts` |
+| **Clean Architecture (presentation / domain / infrastructure)** | Separação por camadas e responsabilidades em todos os MFEs                | Ex: `auth/src/domain/entities/User.ts`, `auth/src/domain/usecases/AuthenticateUser.ts`         |
+| **Lazy loading & pré‑carregamento**                             | `React.lazy` com `webpackPrefetch: true`                                  | `dashboard/src/routes/index.tsx`                                                               |
+| **Armazenamento em cache**                                      | `QueryClient` com `staleTime` e `cacheTime`                               | `dashboard/src/infrastructure/queryClient.ts`                                                  |
+| **Programação reativa**                                         | Hooks personalizados com **RxJS**                                         | `dashboard/src/infrastructure/observables/useObservable.ts`                                    |
+| **Autenticação segura (JWT)**                                   | Backend assina e valida tokens JWT                                        | `backend/src/controllers/authController.js`                                                    |
+| **Criptografia de dados sensíveis**                             | Senhas com hash via **bcrypt**                                            | `backend/src/models/userModel.js`                                                              |
+| **Segurança HTTP**                                              | Middleware **Helmet** + política de CORS restritiva                       | `backend/src/app.js`, `backend/src/config/cors.js`                                             |
+| **Otimização de assets para produção**                          | `Dockerfile` multistage (builder → nginx) por microfrontend               | `auth/Dockerfile`, `dashboard/Dockerfile`, `notfound/Dockerfile`                               |
+
+---
+
 ## 📁 Estrutura do Projeto
 
 ```txt
@@ -15,10 +32,7 @@ Este repositório implementa uma arquitetura baseada em **microfrontends com Rea
 ├── orchestrator/       # Configuração do single-spa root-config (porta 9000)
 ├── docker-compose.yml             # Ambiente de produção
 ├── docker-compose.dev.yml        # Ambiente de desenvolvimento (hot reload)
-├── tasks/             # Configurações de tarefas por módulo
-├── startall.bat       # Script para iniciar todos os módulos (Windows)
-├── tree.txt           # Estrutura gerada do projeto
-└── treeView.py        # Script Python para geração da tree view
+└── tasks/             # Configurações de tarefas por módulo
 ```
 
 ---
@@ -38,19 +52,19 @@ git clone https://github.com/seu-usuario/seu-repositorio.git
 cd seu-repositorio
 ```
 
-### 2. Rodar com Docker (Produção)
+### 2. Executar com Docker (Produção)
 
 ```bash
 docker-compose up --build
 ```
 
-### 3. Rodar com Docker (Desenvolvimento com Hot Reload)
+### 3. Executar com Docker (Desenvolvimento com Hot Reload)
 
 ```bash
 docker-compose -f docker-compose.dev.yml up
 ```
 
-### 4. Rodar Localmente Sem Docker
+### 4. Executar Localmente Sem Docker
 
 Execute cada módulo em terminais separados:
 
@@ -101,61 +115,44 @@ npm start
 ### Frontend (por microfrontend)
 
 - **React + TypeScript**
-- **Single-SPA**: para orquestração dos microfrontends
-- **Webpack 5** + `webpack-config-single-spa`
-- **Husky** + **Prettier** + **ESLint**: para qualidade de código
-- **Jest** + **Testing Library**: para testes
+- **Single-SPA**
+- **Webpack 5** com `webpack-config-single-spa`
+- **Husky**, **Prettier**, **ESLint**
+- **Jest** + **Testing Library**
 
 ### Backend
 
 - **Node.js + Express**
-- **JWT (jsonwebtoken)** para autenticação
-- **Cors**, **body-parser**
-- **JSON Server** (mock de banco de dados)
+- **JWT**
+- **bcrypt**, **Cors**, **body-parser**
+- **JSON Server**
 
 ---
 
 ## 🧪 Qualidade de Código e Testes
 
-- **Lint:** `npm run lint`
-- **Format:** `npm run format`
-- **Testes:** `npm run test`
-- **Coverage:** `npm run coverage`
-- **Hooks com Husky:** pré-commit, commit-msg e mais
+- `npm run lint` — verificação de estilo
+- `npm run format` — formatação com Prettier
+- `npm run test` — execução dos testes
+- `npm run coverage` — cobertura de testes
+- Husky para hooks: pré-commit, commit-msg etc.
 
 ---
 
 ## 🧰 Scripts Úteis
 
-| Comando                           | Descrição                                 |
-| --------------------------------- | ----------------------------------------- |
-| `start`                           | Inicia o módulo com hot reload            |
-| `start:standalone`                | Inicia isoladamente o microfrontend       |
-| `lint`                            | Verifica padrões de código                |
-| `format`                          | Aplica formatação com Prettier            |
-| `test`, `coverage`, `watch-tests` | Executa testes com cobertura ou em watch  |
-| `build`, `build:types`            | Gera build de produção e tipos TypeScript |
-
----
-
-## 🎯 Atendendo aos Requisitos do Desafio
-
-| Requisito do Desafio                                            | Como foi atendido                                                                                  | Onde no Código                                                                                  |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Arquitetura modular / microfrontends**                        | Cada domínio exposto como micro‑app registrado no single‑spa                                       | `orchestrator/root-config/src/index.js`                                                         |
-| **State Management Pattern avançado**                           | Context API + `useReducer` no Auth e cache automático com **React‑Query**                          | `auth/src/presentation/context/AuthContext.tsx` & `dashboard/src/infrastructure/queryClient.ts` |
-| **Clean Architecture (presentation / domain / infrastructure)** | Pastas `presentation`, `domain`, `infrastructure` em todos os MFEs; entidades e use‑cases isolados | Ex.: `auth/src/domain/entities/User.ts`, `auth/src/domain/usecases/AuthenticateUser.ts`         |
-| **Lazy loading & pré‑carregamento**                             | Importação dinâmica (`React.lazy`) com `webpackPrefetch: true`                                     | `dashboard/src/routes/index.tsx`                                                                |
-| **Armazenamento em cache**                                      | `QueryClient` configurado com `staleTime` e `cacheTime`                                            | `dashboard/src/infrastructure/queryClient.ts`                                                   |
-| **Programação reativa**                                         | Hooks customizados baseados em **RxJS**                                                            | `dashboard/src/infrastructure/observables/useObservable.ts`                                     |
-| **Autenticação segura (JWT)**                                   | Token assinado e verificado no backend                                                             | `backend/src/controllers/authController.js`                                                     |
-| **Criptografia de dados sensíveis**                             | Hash da senha com **bcrypt** antes de persistir                                                    | `backend/src/models/userModel.js`                                                               |
-| **Segurança HTTP**                                              | Middleware **Helmet** + CORS restrito                                                              | `backend/src/app.js` & `backend/src/config/cors.js`                                             |
-| **Otimização de assets para produção**                          | `Dockerfile` multistage (builder → nginx) para cada MFE                                            | `auth/Dockerfile`, `dashboard/Dockerfile`, `notfound/Dockerfile`                                |
+| Comando                           | Descrição                            |
+| --------------------------------- | ------------------------------------ |
+| `start`                           | Inicia com hot reload                |
+| `start:standalone`                | Executa microfrontend isoladamente   |
+| `lint`                            | Verifica padrões de código           |
+| `format`                          | Formata com Prettier                 |
+| `test`, `coverage`, `watch-tests` | Testes com cobertura e modo watch    |
+| `build`, `build:types`            | Build de produção e geração de tipos |
 
 ---
 
 ## 📌 Observações
 
-- Todos os módulos seguem convenções semelhantes para facilitar o onboarding.
-- Para garantir isolamento, cada microfrontend tem seu `Dockerfile` e `webpack.config.js` próprio.
+- Cada módulo é independente e segue convenções consistentes para facilitar manutenção e onboarding.
+- Os `Dockerfile`s e `webpack.config.js` são individualizados por microfrontend para garantir isolamento completo.
